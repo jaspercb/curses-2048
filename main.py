@@ -8,10 +8,10 @@ def main():
         highscore = 0
         def log(state):
             stdscr.clear()
-            stdscr.addstr(6, 0, 'High score: {0}'.format(highscore))
+            stdscr.addstr(0, 0, 'High score: {0}'.format(highscore))
             for y in range(4):
                 for x in range(4):
-                    stdscr.addstr(y, x*4, str(state[y][x]))
+                    stdscr.addstr(1 + y, x*5, str(state[y][x]))
         keys = {
             curses.KEY_DOWN  : 'down',
             curses.KEY_UP    : 'up',
