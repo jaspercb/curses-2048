@@ -1,4 +1,5 @@
 import random
+from copy import deepcopy
 
 class Game2048:
     class GameOver(Exception):
@@ -10,6 +11,8 @@ class Game2048:
         self.state = [[0]*4 for i in range(4)]
         self.score = 0
         self.place_random_2()
+        self.previous_state = deepcopy(self.state)
+        self.previous_score = 0
 
     def place_random_2(self):
         empties = []
@@ -23,6 +26,8 @@ class Game2048:
         self.state[i][j] = 2
 
     def move(self, direction):
+        self.previous_state = deepcopy(self.state)
+        self.previous_score = self.score
         def fixline(l):
             # slide
             l = [n for n in l if n]
@@ -68,6 +73,12 @@ class Game2048:
         self.place_random_2()
         if not self.hasValidMove():
             raise Game2048.GameOver
+
+    def undo(self):
+        if (self.previous_state):
+            self.state = self.previous_state
+            self.score = self.previous_score
+            self.previous_state = None
 
     def hasValidMove(self):
         def lineHasMove(l):

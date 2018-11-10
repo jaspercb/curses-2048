@@ -6,28 +6,35 @@ def main():
         curses.noecho()
 
         highscore = 0
-        def log(state):
+        def redraw(state):
             stdscr.clear()
             stdscr.addstr(0, 0, 'High score: {0}'.format(highscore))
+            stdscr.addstr(1, 0, 'Current score: {0}'.format(g.score))
             for y in range(4):
                 for x in range(4):
-                    stdscr.addstr(1 + y, x*5, str(state[y][x]))
+                    stdscr.addstr(2 + y, x*5, str(state[y][x]))
         keys = {
             curses.KEY_DOWN  : 'down',
             curses.KEY_UP    : 'up',
             curses.KEY_LEFT  : 'left',
             curses.KEY_RIGHT : 'right',
         }
+        overrides = {
+            ord('u') : lambda: g.undo(),
+        }
         while True:
             g = Game2048()
-            log(g.state)
+            redraw(g.state)
             try:
                 while True:
                     key = stdscr.getch()
-                    if key in keys:
+                    if key in overrides:
+                        overrides[key]()
+                        redraw(g.state)
+                    elif key in keys:
                         g.move(keys[key])
                         highscore = max(highscore, g.score)
-                        log(g.state)
+                        redraw(g.state)
                         # rerender
             except Game2048.GameOver:
                 stdscr.addstr(5, 0, 'Game over. Press ENTER to start a new game.')
